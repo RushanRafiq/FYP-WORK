@@ -1,8 +1,8 @@
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.chrome.options import Options
-import requests
+# from selenium.webdriver.chrome.options import Options
+# import requests
 import time
 
 # options = Options()
@@ -13,7 +13,6 @@ import time
 # }
 
 options = webdriver.ChromeOptions()
-options.add_experimental_option('prefs', {'intl.accept_languages': 'en,en_US'})
 s = Service("F:/Program Files (x86)/chromedriver.exe")
 driver = webdriver.Chrome(service=s,options=options)
 url =input("Enter Url: ")
