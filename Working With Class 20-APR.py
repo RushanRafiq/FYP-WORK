@@ -10,95 +10,82 @@ import pymysql
 
 
 class ArticleUrlConfig:
-    def __init__(self, url_id):
-        self.url_id = url_id
 
-    def get_article_url_config(self):
+    def get_article_url_config(self,url_id):
         # database connection
         connection = pymysql.connect(host="localhost", user="root", passwd="q1w2e3rty12345",
                                      database="automated_news_broadcast")
         cursor = connection.cursor()
         # Extracting all article url configuration details from database against url
         cursor.execute(
-            "Select tag_name,scrape_type,attribute_name from article_url_configuration where domain_url_id = '%s'" % self.url_id)
+            "Select tag_name,scrape_type,attribute_name from article_url_configuration where domain_url_id = '%s'"
+            % url_id)
         article_url_config_lst = cursor.fetchall()  # store the extracted data into variable
         connection.close()
         return article_url_config_lst
 
 
 class ImgConfig:
-    def __init__(self, url_id):
-        self.url_id = url_id
-
-    def get_article_img_config(self, url_id):
+    def get_article_img_config(self,url_id):
         # database connection
         connection = pymysql.connect(host="localhost", user="root", passwd="q1w2e3rty12345",
                                      database="automated_news_broadcast")
         cursor = connection.cursor()
         # Extracting all article url configuration details from database against url
         cursor.execute(
-            "Select tag_name,scrape_type,attribute_name from article_img_configuration where domain_url_id = '%s'" % self.url_id)
+            "Select tag_name,scrape_type,attribute_name from article_img_configuration where domain_url_id = '%s'" % url_id)
         article_img_config_lst = cursor.fetchall()  # store the extracted data into variable
         connection.close()
         return article_img_config_lst
 
 
 class PublishConfig:
-    def __init__(self, url_id):
-        self.url_id = url_id
-
-    def get_article_publish_date_config(self, url_id):
+    def get_article_publish_date_config(self,url_id):
         # database connection
         connection = pymysql.connect(host="localhost", user="root", passwd="q1w2e3rty12345",
                                      database="automated_news_broadcast")
         cursor = connection.cursor()
         # Extracting all article url configuration details from database against url
         cursor.execute(
-            "Select tag_name,scrape_type,attribute_name from article_publish_date_configuration where domain_url_id = '%s'" % self.url_id)
+            "Select tag_name,scrape_type,attribute_name from article_publish_date_configuration where domain_url_id = '%s'"
+            % url_id)
         article_pub_date_config_lst = cursor.fetchall()  # store the extracted data into variable
         connection.close()
         return article_pub_date_config_lst
 
 
 class HeadlineConfig:
-    def __init__(self, url_id):
-        self.url_id = url_id
-
-    def get_article_topic_head_config(self, url_id):
+    def get_article_topic_head_config(self,url_id):
         # database connection
         connection = pymysql.connect(host="localhost", user="root", passwd="q1w2e3rty12345",
                                      database="automated_news_broadcast")
         cursor = connection.cursor()
         # Extracting all article url configuration details from database against url
         cursor.execute(
-            "Select parent_tag_name,child_tag_name,scrape_type,attribute_name from article_topic_headline_configuration where domain_url_id = '%s'" % self.url_id)
+            "Select parent_tag_name,child_tag_name,scrape_type,attribute_name from article_topic_headline_configuration where domain_url_id = '%s'"
+            % url_id)
         article_head_config_lst = cursor.fetchall()  # store the extracted data into variable
         connection.close()
         return article_head_config_lst
 
 
 class TextConfig:
-    def __init__(self, url_id):
-        self.url_id = url_id
 
-    def get_article_text_config(self, url_id):
+    def get_article_text_config(self,url_id):
         # database connection
         connection = pymysql.connect(host="localhost", user="root", passwd="q1w2e3rty12345",
                                      database="automated_news_broadcast")
         cursor = connection.cursor()
         # Extracting all article url configuration details from database against url
         cursor.execute(
-            "Select tag_name,scrape_type,attribute_name from article_text_configuration where domain_url_id = '%s'" % self.url_id)
+            "Select tag_name,scrape_type,attribute_name from article_text_configuration where domain_url_id = '%s'" %
+            url_id)
         article_text_config_lst = cursor.fetchall()  # store the extracted data into variable
         connection.close()
         return article_text_config_lst
 
 
 class Url(ArticleUrlConfig):
-    def __init__(self, url_id, domain_url):
-        super().__init__(url_id)
-        self.domain_url = domain_url
-
     def get_domain_url(self):
         # database connection
         connection = pymysql.connect(host="localhost", user="root", passwd="q1w2e3rty12345",
@@ -110,16 +97,15 @@ class Url(ArticleUrlConfig):
         connection.close()
         return url_detail_lst
 
-    def get_article_url(self, url_id, domain_url):
+    def get_article_url(self ,url_id, domain_url):
         # Following Section Scrape all the article urls from domain url and return lst
         article_url_extracted_lst = []
-        article_url_config_lst = ArticleUrlConfig(
-            self.url_id).get_article_url_config()  # gets all details of article url config
+        article_url_config_lst = ArticleUrlConfig().get_article_url_config(url_id)  # gets all details of article url config
         options = webdriver.ChromeOptions()
         options.headless = True
         s = Service("F:/Program Files (x86)/chromedriver.exe")
         driver = webdriver.Chrome(service=s, options=options)
-        driver.get(self.domain_url)
+        driver.get(domain_url)
         time.sleep(5)
         doc = BeautifulSoup(driver.page_source, "html.parser")
         driver.quit()
@@ -152,7 +138,7 @@ class Url(ArticleUrlConfig):
                                 cur = connection.cursor()
                                 # inserting article url into database
                                 cur.execute("Insert into article (url_id,article_url) values (%s,%s)",
-                                            (self.url_id, item.get('href')))
+                                            (url_id, item.get('href')))
                                 connection.commit()
                             else:
                                 pass
@@ -358,3 +344,4 @@ class Scrapper(Url, ArticleUrlConfig, ImgConfig, PublishConfig, HeadlineConfig, 
 
 object = Scrapper()
 print(object.Scrape_news())
+
